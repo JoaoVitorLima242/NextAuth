@@ -24,37 +24,41 @@ type User = {
 export const AuthContext = createContext({} as AuthCtx)
 
 
-export function AuthProvider ({ children }) {
+export function AuthProvider({ children }) {
     const [user, setUser] = useState<User | null>(null)
-
-    const isAuthenticated = !!user
-
+  
+    const isAuthenticated = !!user;
+  
     useEffect(() => {
-        const { 'nextauth-token': token } = parseCookies()
-
-        if(token) {
-            recoverUserInformation().then(response => setUser(response.user))
-        }
-    }, [])
-    
-    async function signIn({email, password}: SignInData) {
-        const { token, user } = await signInRequest({ email, password })
-
-        setCookie(undefined, 'nextauth-token', token, {
-            maxAge: 60 * 60 * 1 // 1 hour 
+      const { 'nextauth.token': token } = parseCookies()
+  
+      if (token) {
+        recoverUserInformation().then(response => {
+          setUser(response.user)
         })
-
-        setUser(user)
-
-        api.defaults.headers['authorization'] = `Bearer ${token}`
-
-        Router.push('/dashboard')
-        
+      }
+    }, [])
+  
+    async function signIn({ email, password }: SignInData) {
+      const { token, user } = await signInRequest({
+        email,
+        password,
+      })
+  
+      setCookie(undefined, 'nextauth.token', token, {
+        maxAge: 60 * 60 * 1, // 1 hour
+      })
+  
+      api.defaults.headers['Authorization'] = `Bearer ${token}`;
+  
+      setUser(user)
+  
+      Router.push('/dashboard');
     }
-
+  
     return (
-        <AuthContext.Provider value={{isAuthenticated, signIn, user}}>
-            {children}
-        </AuthContext.Provider>
+      <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+        {children}
+      </AuthContext.Provider>
     )
-}
+    }
