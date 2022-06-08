@@ -19,3 +19,14 @@ export async function signInRequest(data: SigInRequestData) {
         }
     }
 }
+
+export async function recoverUserInformation() {
+    await delay()
+    return {
+        user: {
+            name: "Joaozin",
+            email: "joaozin@email.com",
+            avatar_url: 'https://github.com/JoaoVitorLima242.png'
+        }
+    }
+}
