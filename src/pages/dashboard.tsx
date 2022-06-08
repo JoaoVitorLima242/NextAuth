@@ -3,6 +3,10 @@ import Head from 'next/head'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { AuthContext } from '../contexts/authContext'
+import { parseCookies } from 'nookies'
+import { GetServerSideProps } from 'next'
+import { redirect } from 'next/dist/next-server/server/api-utils'
+import { api } from '../services/api'
 
 const navigation = ['Dashboard', 'Team', 'Projects', 'Calendar', 'Reports']
 const profile = ['Your Profile', 'Settings']
@@ -214,4 +218,25 @@ export default function Dashboard() {
       </main>
     </div>
   )
+}
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { ['nextauth-token']: token } = parseCookies(ctx)
+  
+  if(!token){
+    return {
+        redirect: {
+          destination: '/',
+          performance: false
+        },
+        props: undefined
+    }
+  }
+
+  await api.get('/user')
+
+  return {
+    props: {}
+  }
 }

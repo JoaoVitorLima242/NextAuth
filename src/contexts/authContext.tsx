@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { setCookie, parseCookies } from "nookies"
 
 import { recoverUserInformation, signInRequest } from "../services/auth";
+import { api } from "../services/api";
 interface AuthCtx {
     isAuthenticated: boolean;
     user: User
@@ -44,6 +45,8 @@ export function AuthProvider ({ children }) {
         })
 
         setUser(user)
+
+        api.defaults.headers['authorization'] = `Bearer ${token}`
 
         Router.push('/dashboard')
         
