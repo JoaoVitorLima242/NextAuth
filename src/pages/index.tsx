@@ -1,13 +1,16 @@
 import Head from 'next/head'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import { useForm } from 'react-hook-form'
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/authContext'
 
 export default function Home() {
 
   const { register, handleSubmit } = useForm()
+  const { signIn } = useContext(AuthContext)
 
-  function handleSigIn(data) {
-    
+  async function handleSigIn(data) {
+    await signIn(data)
   }
 
   return (
